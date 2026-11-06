@@ -2,5 +2,6 @@
   <Project Path="DigitalWallet.Application/DigitalWallet.Application.csproj" />
   <Project Path="DigitalWallet.Core/DigitalWallet.Core.csproj" />
   <Project Path="DigitalWallet.Infrastructure/DigitalWallet.Infrastructure.csproj" />
+  <Project Path="DigitalWallet.UnitTests/DigitalWallet.UnitTests.csproj" />
   <Project Path="DigitalWallet/DigitalWallet.API.csproj" />
 </Solution>
