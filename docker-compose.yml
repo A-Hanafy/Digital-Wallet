@@ -1,0 +1,64 @@
+name: digitalwallet
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: digitalwallet-sqlserver
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=${ACCEPT_EULA:-Y}
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:?MSSQL_SA_PASSWORD is required (see .env.example)}
+      - MSSQL_PID=${MSSQL_PID:-Developer}
+    ports:
+      # Exposed to the host only for local dev tooling (SSMS, Azure Data Studio).
+      # Remove in environments where SQL Server should not be reachable externally.
+      - "${MSSQL_HOST_PORT:-1433}:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: >-
+        /opt/mssql-tools18/bin/sqlcmd
+        -S localhost -U sa -P "$$MSSQL_SA_PASSWORD"
+        -C -l 30 -b -Q "SELECT 1;"; exit 0
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+      start_interval: 3s
+    networks:
+      - digitalwallet-net
+
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: digitalwallet/api:latest
+    container_name: digitalwallet-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: http://+:8080
+      # Double-underscore convention maps to ConnectionStrings:DefaultConnection.
+      ConnectionStrings__DefaultConnection: >-
+        Server=sqlserver,1433;
+        Database=${DATABASE_NAME:-Digital_Wallet};
+        User Id=sa;
+        Password=${MSSQL_SA_PASSWORD};
+        TrustServerCertificate=True;
+        Persist Security Info=True;
+      # Override the committed JWT key from appsettings.json with one from .env
+      JWT__Key: ${JWT__KEY:?JWT__KEY is required (see .env.example)}
+    ports:
+      - "${APP_HOST_PORT:-5000}:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - digitalwallet-net
+
+volumes:
+  sqlserver-data:
+
+networks:
+  digitalwallet-net:
+    driver: bridge
