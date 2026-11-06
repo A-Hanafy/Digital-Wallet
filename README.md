@@ -90,10 +90,10 @@ This project is containerized using **Docker** and **Docker Compose** to manage 
 
 ### Services Included:
 - **Web API**: ASP.NET Core Web API built with a multi-stage `Dockerfile`.
-- **Database**: Microsoft SQL Server 2022 container with configured `HealthChecks` (`sqlcmd`) to ensure database readiness before API initialization[cite: 17].
+- **Database**: Microsoft SQL Server 2022 container with configured `HealthChecks` (`sqlcmd`) to ensure database readiness before API initialization.
 
 ### Environment Setup:
-Copy `.env.example` to `.env` and set your secrets[cite: 17]:
+Copy `.env.example` to `.env` and set your secrets:
 ```bash
 cp .env.example .env
 ```
