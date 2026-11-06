@@ -102,7 +102,22 @@ cp .env.example .env
 ```bash
 docker-compose up -d --build
 ```
+----
+## 🧪 Unit Testing
 
+The repository contains a targeted unit test project (`DigitalWallet.UnitTests`) focused on validating core business operations.
+
+### Key Highlights:
+- **Framework & Libraries**: Written using **xUnit** and **Moq**.
+- **Target Logic**: Verifies financial and wallet business rules inside `WalletService`.
+- **Mocking**: Dependencies like `IUnitOfWork` and repositories are mocked to run test suites fast without touching SQL Server.
+- **Pattern**: Standardized on the **Arrange-Act-Assert (AAA)** pattern.
+
+### Run Tests:
+```bash
+dotnet test
+```
+----
 👤 Author
 Ahmed Hanafy
 
